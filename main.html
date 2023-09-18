@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Calculator Testing</title>
+        <link rel="stylesheet" href="styles.css"/>
+        <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+        <script src="operators.js"></script>
+    </head>
+    <body>
+    <div class="calculator">
+        <div class="main">
+            <div id="top">
+                <h2>decimal places: <input type="number" id="decimal_input"></h2>
+                <div id="screen_general"> 
+                    <p id="twoF_indicator"></p>
+                    <p id="screen"></p>
+                </div>
+            </div>
+            <div id="bottom">
+                <div class="home">
+                    <button class = "home_buttons" id="secondF" style="color: orange;" onclick="twoF_click()"> 2ndF</button>
+                    <button class = "home_buttons" onclick="clr()" id="CLR">CLR</button>
+                    <button class = "home_buttons" onclick="back()">Back</button>
+                    
+                </div>
+
+                <div class="buttons">
+                    <div class="numbers"> 
+                        <div>
+                            <button class="row1" onclick="num(7)">7</button>
+                            <button class="row1" onclick="num(8)">8</button>
+                            <button class="row1" onclick="num(9)">9</button>
+                        </div>
+                        
+                        <div> 
+                            <div class="twoF"> 
+                                <div class="twoF_buttons"> n!</div>
+                                <div class="twoF_buttons"> nCr</div>
+                                <div class="twoF_buttons"> nPr</div>
+                            </div>
+
+                            <button class="row2" onclick="num(4)">4</button>
+                            <button class="row2" onclick="num(5)">5</button>
+                            <button class="row2" onclick="num(6)">6</button>
+                        </div>
+
+                        <div class="row3">
+                            <div class="twoF"> 
+                                <div class="twoF_buttons"></div>
+                                <div class="twoF_buttons"></div>
+                                <div class="twoF_buttons"></div>
+                            </div> 
+
+                            <button onclick="num(1)">1</button>
+                            <button onclick="num(2)">2</button>
+                            <button onclick="num(3)">3</button>
+                        </div>
+
+                        <div class="row4">
+                            <div class="twoF"> 
+                                <div class="twoF_buttons"></div>
+                                <div class="twoF_buttons"></div>
+                                <div class="twoF_buttons"></div>
+                            </div>
+                            <button onclick="num(0)">0</button>
+                            <button onclick="num('.')" style="font-weight: 800;">.</button>
+                            <button onclick="num('-')" style="font-weight: 600;">( -- )</button>
+                        </div>
+                    </div>
+
+                    <div class="operation_buttons"> 
+                        <!-- <button onclick="operator('!')">!</button> -->
+                        <!-- <button onclick="operator('nPr')">nPr</button>
+                        <button onclick="operator('nCr')">nCr</button>             -->
+                        <div class="op_row">
+                            <button class ="op_butt" onclick="operator('sqrt')"> <span>&#8730;</span> </button>
+                            <button class ="op_butt" onclick="operator('^')">^</button>
+                        </div>
+
+                        <div class="op_row"> 
+                            <button class ="op_butt" onclick="operator('/')">/</button>
+                            <button class ="op_butt" onclick="operator('x')">x</button>
+                        </div>
+
+                        <div class="op_row">
+                            <button class ="op_butt" onclick="operator('+')">+</button>
+                            <button class ="op_butt" onclick="operator('-')">-</button>
+
+                        </div>
+                        <div class="enter_symbol"> 
+                            <div class="twoF_buttons"> ANS</div>
+                            <button id="enter" onclick="enter()">=</button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            let numbers1 = [];
+            let numbers2 = [];
+            let answer = 0;
+            let num_order = 1;
+            let sign = "";
+            let decimals = 3;
+            let ans = null;
+            const twoF_indic = document.querySelector("#twoF_indicator");
+            let twoF_switch = false;
+            let full_value = 0;
+
+            function draw() {
+                document.querySelector("#screen").innerHTML = `${numbers1.join("")} ${sign} ${numbers2.join("")}`;
+            }
+
+            function num(number) {
+                if (twoF_switch == true) {
+                    if (number == 4) {
+                        operator('!');
+                    }
+
+                    else if (number == 5) { 
+                        operator('nCr');
+                    }
+                    
+                    else if (number == 6) { 
+                        operator('nPr');
+                    }
+                    twoF_switch = false;
+                }
+                else { 
+                    if (num_order == 1) {
+                        numbers1.push(number);
+                    } else if (num_order == 2) {
+                        numbers2.push(number);
+                    }
+                    draw();
+                }
+            };
+
+            function back() {
+                if (num_order == 1) {
+                    numbers1.pop();
+                } else if (num_order == 2) {
+                    if (numbers2.length == 0) {
+                        sign = "";
+                        num_order = 1;
+                    }
+                    numbers2.pop();
+                }
+                draw();
+            };
+
+            function clr() {
+                num_order = 1;
+                numbers1 = []; 
+                numbers2 = [];
+                sign = "";
+                draw();
+                twoF();
+            }
+    
+            function operator(symbol) {
+                sign = symbol;
+                num_order = 2;
+                draw();
+            }
+
+            function write_ans(ans) {
+                full_value = ans;
+                answer = ans.toFixed(decimals);
+                document.querySelector("#screen").innerHTML = `${answer}`;
+            }
+
+            function write_msg(msg) {
+                document.querySelector("#screen").innerHTML = `${msg}`;
+            }
+            function enter() {
+                console.log(twoF_switch);
+                if (twoF_switch == true) { 
+                    ANS();
+                    twoF();
+                }
+                else if (twoF_switch == false ) {
+                    let num1 = (numbers1.join(""));
+                    let num2 = (numbers2.join(""));
+                    const op = sign;
+                    clr()
+                    
+                    if (num1 == "ANS") {
+                        num1 = answer;
+                    }
+                    else if (num2 == "ANS") {
+                        num2 = answer;
+                    }
+
+                    num1 = Number(num1);
+                    num2 = Number(num2);
+
+                    if (op == "+") {
+                        write_ans(add(num1, num2));
+                    } else if (op == "-") {
+                        write_ans(substract(num1, num2));
+                    } else if (op == "/") {
+                        ans = num1 / num2;
+                        write_ans(divide(num1, num2));
+                    } else if (op == "x") {
+                        write_ans(multiply(num1, num2));
+                    } else if (op == "^") {
+                        write_ans(exponent(num1, num2));
+                    } else if (op == "!") {
+                        write_ans(factorial(num1));
+                    } else if (op == "sqrt") {
+                        write_ans(sqrt(num2));
+                    } else if (op == "nPr") {
+                        if (num1 < num2) {
+                            write_msg("wrong format");
+                        } else {
+                            write_ans(nPr(num1, num2));
+                        }
+                    } else if (op == "nCr") {
+                        if (num1 < num2) {
+                            write_msg("wrong format");
+                        } else {
+                            write_ans(nCr(num1,num2));
+                        }
+                    }
+
+                }
+            }
+
+            let decimal_inp = document.getElementById("decimal_input");
+
+            function getVal() {
+                decimals = decimal_inp.value;
+                if (full_value != null) {
+                    write_ans(full_value);
+                }
+
+            }
+            
+            function ANS() {
+                if (num_order == 1){
+                    if (numbers1.length!=0){
+                        numbers1 = [];
+                        num("ANS");
+                        
+                    }
+                    else{
+                        num("ANS");
+
+                    }
+                }
+                else if (num_order == 2){ 
+                    if (numbers2.lenght!=0){
+                        numbers2 = [];
+                        num("ANS");
+                    }
+                    
+                }
+            }
+
+            function twoF_click() { 
+                if (twoF_switch == false) {
+                    twoF_indic.innerHTML = "2ndF";
+                    twoF_switch = true;
+                }
+                else if (twoF_switch == true) {
+                    twoF_indic.innerHTML = "";
+                    twoF_switch = false;
+                }
+            }
+
+            function twoF() {
+                twoF_switch = false;
+                twoF_indic.innerHTML = "";
+            }
+            decimal_input.addEventListener("input", getVal);            
+        </script>
+    </body>
+</html>
